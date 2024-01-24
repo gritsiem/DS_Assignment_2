@@ -1,1 +1,1 @@
-# csci-5673-Distributed-Systems
+# CSCI-5673-Distributed-Systems
