@@ -22,9 +22,9 @@ load_dotenv()
 #                 keywords VARCHAR(8) [],  
 #                 condition VARCHAR(10) CHECK (condition IN ('New', 'Used')),
 #                 sale_price DECIMAL,
-#                 item_quantity INTEGER,
-#                 thumbs_ups INTEGER DEFAULT 0,
-#                 thumbs_downs INTEGER DEFAULT 0,
+#                 quantity INTEGER,
+#                 thumbs_up_count INTEGER DEFAULT 0,
+#                 thumbs_down_count INTEGER DEFAULT 0,
 #                 CHECK (array_length(keywords, 1) <= 5)
 #             );''')
 
@@ -33,7 +33,7 @@ load_dotenv()
 #         # newid = uuid.uuid1()
 #         # try:
 #         print("inserting")
-#         self.cursor.execute("INSERT INTO product(item_name, seller_id, item_category, condition, sale_price, item_quantity, keywords) VALUES \
+#         self.cursor.execute("INSERT INTO product(item_name, seller_id, item_category, condition, sale_price, quantity, keywords) VALUES \
 #                             (%s, %s, %s,%s,%s,%s, %s) returning id",(name, sellerid, category, condition, price, quantity, keywords))
 #         self.connection.commit() 
 #             # self.table.append({"id": newid, "username": un,"password":pw})
@@ -71,7 +71,7 @@ load_dotenv()
 #         products = []
 #         #try:
 #         print("seller id", sellerid)
-#         self.cursor.execute("SELECT id, item_name, item_category, condition, sale_price, item_quantity FROM product WHERE seller_id = %s", (sellerid,))
+#         self.cursor.execute("SELECT id, item_name, item_category, condition, sale_price, quantity FROM product WHERE seller_id = %s", (sellerid,))
 #         products = self.cursor.fetchall()
 #         # self.connection.commit()
 #             # self.table.append({"id": newid, "username": un,"password":pw})
@@ -82,7 +82,7 @@ load_dotenv()
 #     def getRatings(self,sellerid):
 #         # try:
 #         # print("seller id", sellerid)
-#         self.cursor.execute("SELECT SUM(thumbs_ups), SUM(thumbs_downs) FROM product WHERE seller_id = %s", (sellerid,))
+#         self.cursor.execute("SELECT SUM(thumbs_up_count), SUM(thumbs_down_count) FROM product WHERE seller_id = %s", (sellerid,))
 #         thumbsups, thumbsdowns= self.cursor.fetchone()
 #         # self.connection.commit()
 #             # self.table.append({"id": newid, "username": un,"password":pw})
@@ -107,9 +107,9 @@ class ProductInterface:
                 keywords VARCHAR(8) [],  
                 condition VARCHAR(10) CHECK (condition IN ('New', 'Used')),
                 sale_price DECIMAL,
-                item_quantity INTEGER,
-                thumbs_ups INTEGER DEFAULT 0,
-                thumbs_downs INTEGER DEFAULT 0,
+                quantity INTEGER,
+                thumbs_up_count INTEGER DEFAULT 0,
+                thumbs_down_count INTEGER DEFAULT 0,
                 CHECK (array_length(keywords, 1) <= 5)
             );''')
 
@@ -118,7 +118,7 @@ class ProductInterface:
         # newid = uuid.uuid1()
         # try:
         print("inserting")
-        self.cursor.execute("INSERT INTO product(item_name, seller_id, item_category, condition, sale_price, item_quantity, keywords) VALUES \
+        self.cursor.execute("INSERT INTO product(item_name, seller_id, item_category, condition, sale_price, quantity, keywords) VALUES \
                             (%s, %s, %s,%s,%s,%s, %s) returning id",(name, sellerid, category, condition, price, quantity, keywords))
         self.connection.commit() 
             # self.table.append({"id": newid, "username": un,"password":pw})
@@ -162,7 +162,7 @@ class ProductInterface:
         products = []
         #try:
         # print("seller id", sellerid)
-        self.cursor.execute("SELECT id, item_name, item_category, condition, sale_price, item_quantity FROM product WHERE seller_id = %s", (sellerid,))
+        self.cursor.execute("SELECT id, item_name, item_category, condition, sale_price, quantity FROM product WHERE seller_id = %s", (sellerid,))
         products = self.cursor.fetchall()
         # self.connection.commit()
             # self.table.append({"id": newid, "username": un,"password":pw})
@@ -173,7 +173,7 @@ class ProductInterface:
     def getRatings(self,sellerid):
         try:
         # print("seller id", sellerid)
-            self.cursor.execute("SELECT SUM(thumbs_ups), SUM(thumbs_downs) FROM product WHERE seller_id = %s", (sellerid,))
+            self.cursor.execute("SELECT SUM(thumbs_up_count), SUM(thumbs_down_count) FROM product WHERE seller_id = %s", (sellerid,))
             thumbsups, thumbsdowns= self.cursor.fetchone()
             self.connection.commit()
             # self.table.append({"id": newid, "username": un,"password":pw})
