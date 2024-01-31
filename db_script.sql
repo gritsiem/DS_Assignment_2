@@ -9,6 +9,10 @@ CREATE TABLE product (
     keywords VARCHAR(8) [],  
     condition VARCHAR(10) CHECK (condition IN ('New', 'Used')),
     sale_price DECIMAL,
+    quantity INTEGER CHECK (quantity >= 0),
+    seller_id INTEGER,
+    thumbs_up_count INTEGER DEFAULT 0 CHECK (thumbs_up_count >= 0),
+    thumbs_down_count INTEGER DEFAULT 0 CHECK (thumbs_down_count >= 0),
     CHECK (array_length(keywords, 1) <= 5)
 );
 
@@ -23,7 +27,9 @@ CREATE TABLE buyer (
     buyer_id SERIAL PRIMARY KEY,
     name VARCHAR(32) NOT NULL,
     no_of_items_purchased INTEGER NOT NULL CHECK (items_purchased >= 0),
-    password VARCHAR(12) CHECK (char_length(password) BETWEEN 6 AND 12)
+    username VARCHAR(32) UNIQUE NOT NULL,
+    password VARCHAR(12) CHECK (char_length(password) BETWEEN 6 AND 12),
+    is_logged_in BOOLEAN DEFAULT FALSE
 );
 
 -- INSERT INTO buyer(name, no_of_items_purchased, password) VALUES ('Katie', 0, 'testkatie');
@@ -42,7 +48,9 @@ CREATE TABLE cart_items (
     cart_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
     quantity INTEGER NOT NULL CHECK (quantity > 0),
+    feedback BOOLEAN DEFAULT NULL,
     FOREIGN KEY (cart_id) REFERENCES cart(cart_id)
 );
 
+-- UPDATE cart SET status = 'Purchased' where buyer_id = 2;
 
