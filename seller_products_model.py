@@ -8,90 +8,6 @@ import pickle
 
 load_dotenv()
 
-# class ProductInterface:
-#     def __init__(self):
-#         pw = os.getenv('PASSWORD')
-#         self.connection = psycopg2.connect(f"dbname='products_db' user='postgres' host='localhost' password='{pw}'")
-#         self.cursor = self.connection.cursor()
-
-#         self.cursor.execute('''CREATE TABLE IF NOT EXISTS product (
-#                 id SERIAL PRIMARY KEY,
-#                 item_name VARCHAR(32),
-#                 seller_id INTEGER,
-#                 item_category INTEGER CHECK (item_category >= 0 AND item_category <= 9),
-#                 keywords VARCHAR(8) [],  
-#                 condition VARCHAR(10) CHECK (condition IN ('New', 'Used')),
-#                 sale_price DECIMAL,
-#                 quantity INTEGER,
-#                 thumbs_up_count INTEGER DEFAULT 0,
-#                 thumbs_down_count INTEGER DEFAULT 0,
-#                 CHECK (array_length(keywords, 1) <= 5)
-#             );''')
-
-
-#     def addProduct(self, sellerid, name, category, condition, price, quantity, keywords):
-#         # newid = uuid.uuid1()
-#         # try:
-#         print("inserting")
-#         self.cursor.execute("INSERT INTO product(item_name, seller_id, item_category, condition, sale_price, quantity, keywords) VALUES \
-#                             (%s, %s, %s,%s,%s,%s, %s) returning id",(name, sellerid, category, condition, price, quantity, keywords))
-#         self.connection.commit() 
-#             # self.table.append({"id": newid, "username": un,"password":pw})
-#         # except:
-#         #     print("exception")
-#         #     return -1
-#         self.id = self.cursor.fetchone()[0]
-#         return self.id
-    
-#     def editProduct(self, prodid, price):
-#         # newid = uuid.uuid1()
-#         try:
-#             self.cursor.execute("UPDATE product SET sale_price = %s WHERE id = %s",(price,prodid))
-#             self.connection.commit()
-#             # self.table.append({"id": newid, "username": un,"password":pw})
-#         except:
-#             print("exception")
-#             return -1
-#         return prodid
-    
-#     def removeProduct(self, prodid):
-#         # newid = uuid.uuid1()
-#         try:
-#             self.cursor.execute("DELETE FROM product WHERE id = %s",(prodid))
-#             self.connection.commit()
-#             # self.table.append({"id": newid, "username": un,"password":pw})
-#         except:
-#             print("exception")
-#             return -1
-#         return prodid
-    
-
-        
-#     def getProducts(self, sellerid):
-#         products = []
-#         #try:
-#         print("seller id", sellerid)
-#         self.cursor.execute("SELECT id, item_name, item_category, condition, sale_price, quantity FROM product WHERE seller_id = %s", (sellerid,))
-#         products = self.cursor.fetchall()
-#         # self.connection.commit()
-#             # self.table.append({"id": newid, "username": un,"password":pw})
-#         # except:
-#         #     return []
-#         return products 
-    
-#     def getRatings(self,sellerid):
-#         # try:
-#         # print("seller id", sellerid)
-#         self.cursor.execute("SELECT SUM(thumbs_up_count), SUM(thumbs_down_count) FROM product WHERE seller_id = %s", (sellerid,))
-#         thumbsups, thumbsdowns= self.cursor.fetchone()
-#         # self.connection.commit()
-#             # self.table.append({"id": newid, "username": un,"password":pw})
-#         # except:
-#         #     return "error!error!erroe!"
-#         return thumbsups, thumbsdowns
-    
-#     def close_connection(self):
-#         self.connection.close()
 
 class ProductInterface:
     def __init__(self):
@@ -181,8 +97,9 @@ class ProductInterface:
             return -1
         return thumbsups, thumbsdowns
     
-    def close_connection(self):
+    def close_conn(self):
         self.connection.close()
+    
 
 
 

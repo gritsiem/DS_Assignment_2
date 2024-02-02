@@ -71,6 +71,9 @@ class CustomerInterface:
         self.cursor.execute("UPDATE seller SET thumbs_up_count = %s, thumbs_down_count = %s WHERE id = %s",(tu,td, seller_id))
         self.connection.commit()
         return 1
+    
+    def close_conn(self):
+        self.connection.close()
 
 
 

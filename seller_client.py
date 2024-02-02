@@ -51,8 +51,8 @@ class Connection:
         '''
 
         # either use actual console input or automatic script
-        msg= input()
-        # msg = next(msgGenerator) 
+        # msg= input()
+        msg = next(msgGenerator) 
 
         # As number of bytes have to be known to receive message in python, client 
         # first sends the length of the message in bytes and then the actual message   
@@ -80,7 +80,7 @@ class Connection:
                 print("Closed connection...")
                 return
             # currently commented out for automation purposes. 
-            print(response)
+            # print(response)
             self.send(msgGenerator)
     
 # when running from console

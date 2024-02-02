@@ -101,6 +101,9 @@ class Seller:
     def clearUser(self):
         self._username = None
         self._password = None
+    
+    def cleandb(self):
+        self.db.close_conn()
         
 
 class Products:
@@ -195,13 +198,18 @@ class Products:
         '''
         Reset data for next operation
         '''
-        self.id = None
+        self.prodid = None
         self.sellerid = None
         self.name  = None
         self.category  = None
         self.condition = None
         self.price = None
+        self.quantity = None
         self.keywords = None
+        self.feedback = None
+    
+    def cleandb(self):
+        self.proddb.close_conn()
 
         
 
@@ -329,7 +337,7 @@ class SellerPortal:
             self.globalResponse["invokeTime"] = None
             return self.globalResponse
         elif not self.products.condition:
-            self.products.condition = 'New' if int(request_msg==1) else "Used"
+            self.products.condition = 'New' if int(request_msg) ==1 else "Used"
             self.globalResponse["msg"]= "\nPrice: "
             self.globalResponse["invokeTime"] = None
             return self.globalResponse
@@ -494,13 +502,19 @@ class SellerPortal:
             self.globalResponse["msg"] = msg + "\nPress enter to go back to the menu"
         return self.globalResponse   
 
-    def handleLogout(self):
+    def handleLogout(self, inactivity = False):
         self.LOGIN_STATUS = False
         self.seller.clearUser()
+        if inactivity:
+            self.currentPage=0
+            return {"msg": "You were logged out because of inactivity. Please login again.\n\n" + self.getMenuMessage("home"), "invokeTime":None}
         self.globalResponse["msg"] = "Logging out...\n\n" + self.getMenuMessage("home")
         self.globalResponse["invokeTime"] = None
+
         
     def handleExit(self):
+        self.products.cleandb()
+        self.seller.cleandb()
         self.globalResponse["msg"] = "!DISCONNECT"
         self.globalResponse["invokeTime"] = None
     
@@ -508,6 +522,6 @@ class SellerPortal:
         self.globalResponse["msg"] = self.INCORRECT_INPUT_ERROR
         self.globalResponse["invokeTime"] = None
 
-    def getResponse(self, msg):
+    def getResponse(self, msg, ):
         # redirect control to current function
         return self.pages[self.currentPage](msg)

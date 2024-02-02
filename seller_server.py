@@ -82,10 +82,9 @@ class Server:
 
             # Get string from bytes received by client 
             # first part of message - length of the actual message
-            if(time.time() - inactivityTimer>=300):
-                seller.handleLogout()
             msg_len = client.recv(self.HEADER).decode(self.FORMAT) # blocking
-            inactivityTimer = time.time()
+            
+
             # if message is empty, ignore
             if msg_len:
                 msg_len = int(msg_len)
@@ -93,9 +92,17 @@ class Server:
                 # second part of message - the content of client input
                 msg = client.recv(msg_len).decode(self.FORMAT) 
 
+                # inactivity check
+                previoustime = inactivityTimer
+                inactivityTimer = time.time()
+
+                if(inactivityTimer - previoustime > 20):
+                    print("Should log out now") 
+                    response = seller.handleLogout(inactivity=True)
+                else:
                 # pass the message directly to the interface, get response
                 # response has 2 parts - msg and invokeTime (stats)
-                response = seller.getResponse(msg)
+                    response = seller.getResponse(msg)
 
                 # if client exits, detect via disconnect messaget
                 if(response["msg"] == self.DISCONNECT_MSG):
