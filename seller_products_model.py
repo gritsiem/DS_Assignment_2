@@ -12,7 +12,7 @@ load_dotenv()
 class ProductInterface:
     def __init__(self):
         pw = os.getenv('PASSWORD')
-        un  = os.getenv('USERNAME')
+        un  = os.getenv('USER_NAME')
         self.connection = psycopg2.connect(f"dbname='products_db' user='{un}' host='localhost' password='{pw}'")
         self.cursor = self.connection.cursor()
 
