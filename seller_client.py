@@ -18,8 +18,9 @@ class Connection:
         Initializes required parameters for socket connection and also begins communication. 
         '''
         self._HEADER = 64
-        self._SERVER = socket.gethostbyname(socket.gethostname())
-        self._PORT = 6050
+        # self._SERVER = socket.gethostbyname(socket.gethostname())
+        self._SERVER = '10.0.0.49'
+        self._PORT = 5060
         self._ADDRESS = (self._SERVER, self._PORT)
         self._FORMAT = "utf-8"
         self.DISCONNECT_MSG = "bye"

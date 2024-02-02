@@ -10,7 +10,8 @@ load_dotenv()
 class CustomerInterface:
     def __init__(self):
         pw = os.getenv('PASSWORD')
-        self.connection = psycopg2.connect(f"dbname='customers_db' user='postgres' host='localhost' password='{pw}'")
+        un = os.getenv('USERNAME')
+        self.connection = psycopg2.connect(f"dbname='customers_db' user='{un}' host='localhost' password='{pw}'")
         self.cursor = self.connection.cursor()
         try:
             self.cursor.execute('''CREATE TABLE IF NOT EXISTS seller (

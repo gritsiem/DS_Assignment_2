@@ -123,9 +123,9 @@ class CustomersDatabase:
 
     def get_seller_rating(self, seller_id):
         try:
-            self.cursor.execute("SELECT rating FROM seller WHERE seller_id = %s", (seller_id,))
-            rating = self.cursor.fetchone()
-            return rating[0] if rating else None
+            self.cursor.execute("SELECT thumbs_up_count, thumbs_down_count FROM seller WHERE id = %s", (seller_id,))
+            rating = self.cursor.fetchall()
+            return rating
         except Exception as e:
             print(f"Error getting seller rating: {e}")
             return None
@@ -134,7 +134,6 @@ class CustomersDatabase:
         try:
             self.cursor.execute("SELECT cart_id FROM cart WHERE buyer_id = %s AND status = 'Purchased' ORDER BY status_changed_at DESC LIMIT 1", (buyer_id,))
             latest_order = self.cursor.fetchone()
-            print("Inside get_purchased_items...")
             if latest_order is None:
                 print(f"No purchase made from buyer_id: {buyer_id}")
                 return
@@ -150,12 +149,35 @@ class CustomersDatabase:
             print(f"Error fetching the purchased items: {e}")
             return None
             
-    def has_provided_feedback(self, product_id, buyer_id):
+    def has_provided_feedback(self, buyer_id, product_id):
         try:
-            self.cursor.execute("SELECT feedback FROM cart_items WHERE product_id = %s AND cart_id IN (SELECT card_id FROM cart WHERE buyer_id = %s AND status = 'Purchased' ORDER BY status_changed_at DESC LIMIT 1)", (product_id, buyer_id))
-            return self.cursor.fetchone() is not None
+            self.cursor.execute("SELECT feedback FROM cart_items WHERE product_id = %s AND cart_id IN (SELECT cart_id FROM cart WHERE buyer_id = %s AND status = 'Purchased' ORDER BY status_changed_at DESC LIMIT 1)", (product_id, buyer_id))
+            feedback = self.cursor.fetchone()[0] 
+            print(f"Feedback in [DB]: {feedback}")
+            return feedback
         except Exception as e:
             print(f"Error checking feedback status: {e}")
+            return False
+    
+    def update_feedback(self, buyer_id, product_id):
+        try:
+            self.cursor.execute("UPDATE cart_items SET feedback = True WHERE product_id = %s AND cart_id IN (SELECT cart_id FROM cart WHERE buyer_id = %s AND status = 'Purchased' ORDER BY status_changed_at DESC LIMIT 1)", (product_id, buyer_id))
+            self.connection.commit()
+            return "Feedback updated successfully."
+        except Exception as e:
+            self.connection.rollback()
+            print(f"Error while updating feedback: {e}")
+            return False
+    
+    def update_seller_feedback(self, seller_id, feedback_type):
+        try:
+            column_to_increment = 'thumbs_up_count' if feedback_type == '1' else '2'
+            self.cursor.execute(f"UPDATE seller SET {column_to_increment} = (SELECT {column_to_increment} FROM seller WHERE id = %s) + 1 WHERE id = %s", (seller_id, seller_id))
+            self.connection.commit()
+            return "Feedback updated successfully."
+        except Exception as e:
+            self.connection.rollback()
+            print(f"Error while updating feedback in seller: {e}")
             return False
     
     def get_buyer_id(self, username):
