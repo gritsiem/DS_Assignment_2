@@ -60,20 +60,28 @@ class ProductsDatabase:
             return {product_id: {'name': name, 'price': price} for product_id, name, price in product_details}
         except Exception as e:
             print(f"Error while fetching the product details: {e}")
-            self.connection.rollback()
             return None
 
-    def update_feedback(self, product_id):
+    def update_feedback(self, product_id, feedback_type):
         try:
-            column_to_increment = 'thumbs_up_count' if feedback_type == 'Thumbs Up' else 'thumbs_down_count'
-            self.cursor.execute(f"UPDATE products SET {column_to_increment} = {column_to_increment} + 1 WHERE product_id = %s", (product_id,))
+            column_to_increment = 'thumbs_up_count' if feedback_type == '1' else '2'
+            self.cursor.execute(f"UPDATE product SET {column_to_increment} = (SELECT {column_to_increment} FROM product WHERE id = %s) +1 WHERE id = %s", (product_id,product_id))
             self.connection.commit()
             return "Feedback updated successfully."
         except Exception as e:
             self.connection.rollback()
             print(f"Error updating feedback: {e}")
-            return "Error while updating feedback."
+            return False
     
+    def get_seller_id(self, product_id):
+        try:
+            self.cursor.execute(f"SELECT seller_id FROM product WHERE id = %s", (product_id,))
+            seller_id = self.cursor.fetchone()[0]
+            return seller_id
+        except Exception as e:
+            print(f"Error while fetching seller_id: {e}")
+            return None
+
     def product_is_present(self, product_id):
         try:
             self.cursor.execute(f"")  ##finish this

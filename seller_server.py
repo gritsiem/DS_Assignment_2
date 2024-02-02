@@ -19,8 +19,9 @@ class Server:
         Initializes for binding server to port and keeps track of active connections over all clients 
         '''
         self.HEADER = 64
-        SERVER = socket.gethostbyname(socket.gethostname())
-        self.PORT = 6050
+        # SERVER = socket.gethostbyname(socket.gethostname())
+        SERVER = '10.0.0.49'
+        self.PORT = 5060
         self.ADDRESS = (SERVER, self.PORT)
         self.FORMAT = "utf-8"
         self.DISCONNECT_MSG = "!DISCONNECT"
