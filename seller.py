@@ -361,6 +361,7 @@ class SellerPortal:
             self.globalResponse["msg"] = msg + "\nPlease try again. \n\nPress enter to get back to the main menu"
             return self.globalResponse
         
+        self.products.sellerid = self.seller.id
         newid = self.products.addProduct()
         self.globalResponse["msg"] = "Product added successfully!\n\nPress enter to get back to the main menu"
         self.currentPage = 0
@@ -505,6 +506,7 @@ class SellerPortal:
     def handleLogout(self, inactivity = False):
         self.LOGIN_STATUS = False
         self.seller.clearUser()
+        self.products.clearProduct()
         if inactivity:
             self.currentPage=0
             return {"msg": "You were logged out because of inactivity. Please login again.\n\n" + self.getMenuMessage("home"), "invokeTime":None}
