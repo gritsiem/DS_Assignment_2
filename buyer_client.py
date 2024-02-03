@@ -27,7 +27,7 @@ class BuyerClient:
             s.connect(("8.8.8.8", 80))
             ip = s.getsockname()[0]
             s.close()
-            print(f"Ip address: {ip}")
+            # print(f"Ip address: {ip}")
             return ip
         except Exception as e:
             print(f"Error: {e}")
@@ -158,7 +158,35 @@ class BuyerClient:
 
             if option == '3' and not self.is_logged_in: 
                 break
+       
+        # self.measure_throughput()
+        # self.response_time()
+        # self.client.close()
     
+    def response_time(self):
+        responsetimes = []
+        for i in range(10):
+            start = time.time()
+            self.get_seller_rating(2)
+            end = time.time()
+            responsetimes.append(end-start)
+    
+        print("Response time: ",sum(responsetimes)/10)
+
+    def measure_throughput(self):
+        # print("Measuring throughput...")
+        client_operations = 1000
+        total_time = 0
+
+        for _ in range(client_operations):
+            start = time.time()
+            self.get_seller_rating(2)
+            end = time.time()
+            total_time += (end - start)
+
+        throughput = client_operations / total_time
+        print(f"Throughput: {throughput} operations/second")
+
     def handle_option(self, option):
         if option == '1':
             username = input("Choose your username: ")
