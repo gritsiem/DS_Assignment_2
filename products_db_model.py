@@ -1,10 +1,19 @@
 import psycopg2
+import os
 from psycopg2 import OperationalError, Error
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class ProductsDatabase:
-    def __init__(self, dbname, user, password, host, port):
+    def __init__(self):
         try:
-            self.connection = psycopg2.connect(database=dbname, user=user, password=password, host=host, port=port)
+            pw = os.getenv('PASSWORD')
+            un = os.getenv('USER_NAME')
+            self.DB_HOST = 'localhost'
+            self.DB_PORT = '5432'
+            self.DB_NAME = 'products_db'
+            self.connection = psycopg2.connect(database=self.DB_NAME, user=un, password=pw, host=self.DB_HOST, port=self.DB_PORT)
             self.cursor = self.connection.cursor()
         except OperationalError as e:
             print(f"An error occurred while connecting to the database: {e}")

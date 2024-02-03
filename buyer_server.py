@@ -14,14 +14,8 @@ class BuyerServer:
         self.address = (self.server_ip, self.PORT)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind(self.address)
-        self.DB_HOST = 'localhost'
-        self.DB_PORT = '5432'
-        self.DB_NAME = 'products_db'
-        self.DB_NAME1 = 'customers_db'
-        self.DB_USER = 'naveenaganesan'
-        self.DB_PASSWORD = 'test1234'
-        self.products_db = ProductsDatabase(dbname=self.DB_NAME, user=self.DB_USER, password=self.DB_PASSWORD, host=self.DB_HOST, port=self.DB_PORT)
-        self.customers_db = CustomersDatabase(dbname=self.DB_NAME1, user=self.DB_USER, password=self.DB_PASSWORD, host=self.DB_HOST, port=self.DB_PORT)
+        self.customers_db = CustomersDatabase()
+        self.products_db = ProductsDatabase()
         self.start()
 
     @staticmethod
@@ -157,7 +151,6 @@ class BuyerServer:
 
             # conn.send("\nPlease enter the product ID for which you want to provide feedback:".encode(self.FORMAT))
             product_id = conn.recv(self.HEADER).decode(self.FORMAT)
-            print(f"Product Id: {product_id}")
         
             # Check if feedback has already been provided for this product
             if self.customers_db.has_provided_feedback(buyer_id, product_id):
@@ -167,8 +160,7 @@ class BuyerServer:
             # Get feedback type from the client
             conn.send("\nPlease enter your feedback \nChoose 1 for Thumbs Up or 2 for Thumbs Down:".encode(self.FORMAT))
             feedback_type = conn.recv(self.HEADER).decode(self.FORMAT)
-            print(f"[FEEDBACK in Server]: {feedback_type}")
-
+        
             feedback_result = self.products_db.update_feedback(product_id, feedback_type)
             cart_item_update_result = self.customers_db.update_feedback(buyer_id, product_id)
 
