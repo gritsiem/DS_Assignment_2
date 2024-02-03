@@ -19,8 +19,8 @@ class Server:
         Initializes for binding server to port and keeps track of active connections over all clients 
         '''
         self.HEADER = 64
-        # SERVER = socket.gethostbyname(socket.gethostname())
-        SERVER = '10.0.0.49'
+        SERVER = socket.gethostbyname(socket.gethostname())
+        # SERVER = '10.0.0.49'
         self.PORT = 5060
         self.ADDRESS = (SERVER, self.PORT)
         self.FORMAT = "utf-8"
@@ -132,7 +132,7 @@ class Server:
                     # end of run calculation for both stats
                     # reset counters for the next run
                     if tpcounter == 1001:
-                        stats["atp"].append(tpcounter-1/optimes)
+                        stats["atp"].append((tpcounter-1)/optimes)
                         tpcounter=0
                         optimes = 0
 
