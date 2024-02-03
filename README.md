@@ -12,12 +12,12 @@
 
 2. ### Database description
 
-Customers DB has 4 tables. 'buyers','sellers', 'cart' and 'cart_item'. The buyer and seller tables are used to store login credentials and also the associated characteristics described in the assignment.
+Customers DB has 4 tables. 'buyer','seller', 'cart' and 'cart_items'. The buyer and seller tables are used to store login credentials and also the associated characteristics described in the assignment. The cart and cart_items table store the cart details for all the buyers.
 
 Products DB has a 'product' table, storing all the details ascribed to an 'item for sale' as well as seller id (as a foreign ID ) and feedback columns.
 
 3. ### Buyer class
-Fill description
+The server handles all the necessory functions. The client send the request to the server and the server performs operations based on the requests made by the client. The server interacts with db classes to fetch neccesary details from the databases. The server also validates all the requests. The db interface classes 'CustomersDatabase' and 'ProductsDatabase' handles all the incoming db requests and performs required operations in the databases. 
 
 4. ### Seller side interface
 
@@ -33,10 +33,12 @@ The times for calculating Average Server throughput and Average Response Times a
 
 Seller - Login is done assuming unique usernames. The feedback is actually updated in DB only when the user wants to see their rating and not in real time. Bad and empty client inputs are handled, or otherwise validated. In one session, some information is persisted in server (seller id, logged in status). It is assumed the client does not have any idea about the server functionalities when it connects.
 
+Buyer -Same as seller login is doneassuming unique usernames. And in a session, some information is persisted in the server. 
+
 DB - For connecting to PostgreSQL, it is assumed it uses sockets and TCP/IP underneath the library API (based on the documentaion)
 
-Evaluation - The evaluation is carried out only using read functions (fetching products or cart items). 
+Evaluation - The evaluation is carried out only using read functions (fetching products or cart items).
 
 
 # What doesn't work
-There are a few edge cases that are not handled. The seller can upload same product multiple times with all details same as long as ID is autoincremented. Ideally, the quantity should be increased. 
+There are a few edge cases that are not handled. The seller can upload same product multiple times with all details same as long as ID is autoincremented. Ideally, the quantity should be increased. But similar edge case for adding an item to the cart is handled. In Buyer, one edge case where the number of specific products should be less than or equal to the quantiy of the product is not handled. 
