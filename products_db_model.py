@@ -20,24 +20,15 @@ class ProductsDatabase:
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
     
-    def search_products(self, query):
+    def search_products(self, item_category, keywords):
         try:
-            # self.cursor.execute("SELECT * FROM product WHERE item_name ILIKE %s OR keywords ILIKE %s", ('%'+query+'%', '%'+query+'%'))
-            self.cursor.execute("SELECT * FROM product WHERE item_name ILIKE %s OR %s = ANY(keywords)", ('%'+query+'%', query))
+            sql_query = "SELECT * FROM product WHERE item_category = %s AND (" + " OR ".join(["keywords @> %s" for _ in keywords]) + ");"
+            self.cursor.execute(sql_query, (item_category, *keywords))
             return self.cursor.fetchall()
         except OperationalError as e:
             print(f"An error occurred while executing the query: {e}")
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
-    
-    # def insert_product(self, name, category, keywords, condition, price):
-    #     try:
-    #         self.cursor.execute("INSERT INTO product (item_name, item_category, keywords, condition, sale_price) VALUES (%s, %s, %s, %s, %s)", (name, category, keywords, condition, price))
-    #         self.connection.commit()
-    #     except psycopg2.Error as e:
-    #         print(f"Database error: {e}")
-    #     except Exception as e:
-    #         print(f"An unexpected error occurred: {e}")
     
     def add_to_cart(self, buyer_id, product_id, quantity):
         # 1. Check if the buyer already has an Inprogress cart

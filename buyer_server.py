@@ -54,10 +54,11 @@ class BuyerServer:
             print(f"Error during authentication: {e}")
             conn.send("Authentication failed.".encode(self.FORMAT))
 
-    def handle_search(self, query, conn):
+    def handle_search(self, item_category, keywords, conn):
         try:
-            results = self.products_db.search_products(query)
-            formatted_results = "\n".join([f"{product[0]}. {product[1]}" for product in results])
+            results = self.products_db.search_products(item_category, keywords)
+            header = "Id Name Condition Sale_price Quantity"
+            formatted_results = "\n".join([header] + [f"{product[0]} {product[1]} {product[5]} {product[6]} {product[7]}" for product in results])
             conn.send(formatted_results.encode(self.FORMAT))
         except Exception as e:
             print(f"Error during search: {e}")
@@ -201,8 +202,11 @@ class BuyerServer:
                         _, username, password = msg.split()
                         self.handle_login(username, password, conn)
                     elif msg.startswith("SEARCH"):
-                        query = msg.split("SEARCH ")[1]
-                        self.handle_search(query, conn)
+                        msg_split = msg.split()
+                        item_category = msg_split[1]
+                        keywords = msg_split[2:]
+                        # print(f"Item_category: {item_category} and Keywords: {keywords}")
+                        self.handle_search(item_category, keywords, conn)
                     elif msg.startswith("ADD_TO_CART"):
                         _, buyer_id, product_id, quantity = msg.split()
                         self.handle_add_to_cart(buyer_id, product_id, quantity, conn)

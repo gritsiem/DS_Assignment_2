@@ -64,9 +64,9 @@ class BuyerClient:
             self.buyer_id = buyer_id_response.split()[-1]
             print(f"Buyer Id: {self.buyer_id}")
 
-    def search_item(self, query):
+    def search_item(self, item_category, keywords):
         # Sends a search query to the server and prints the received search results
-        search_results = self.send(f"SEARCH {query}")
+        search_results = self.send(f"SEARCH {item_category} {keywords}")
         print(f"Search Results:\n{search_results}")
 
     def add_to_cart(self, product_id, quantity):
@@ -200,8 +200,10 @@ class BuyerClient:
         elif option == '3':
             self.client.close()
         elif option == '4':
-            query = input("Enter search query: ")
-            self.search_item(query)
+            item_category = input("Enter item category: ")
+            keywords_input = input("Enter up to 5 keywords, separated by commas: ")
+            keywords = "{" + ",".join(keyword.strip() for keyword in keywords_input.split(',')) + "}"
+            self.search_item(item_category, keywords)
         elif option == '5':
             product_id = input("Enter product id: ")
             quantity = input("Enter quantity: ")
