@@ -202,18 +202,20 @@ class BuyerServer:
                     msg_length = int(msg_length)
                     msg = conn.recv(msg_length).decode(self.FORMAT)
                     print(f"Message in [Server]: {msg}")
+
                     # inactivity check
                     previoustime = inactivityTimer
                     inactivityTimer = time.time()
-                    if(inactivityTimer - previoustime > 20):
-                        print("Should log out now")
-                        self.handle_inactivity(msg.split()[1], conn)
-                    elif msg.startswith("CREATE_ACCOUNT"):
+                    
+                    if msg.startswith("CREATE_ACCOUNT"):
                         _, username, password, name = msg.split()
                         self.handle_create_account(username, password, name, conn)
                     elif msg.startswith("LOGIN"):
                         _, username, password = msg.split()
                         self.handle_login(username, password, conn)
+                    elif(inactivityTimer - previoustime > 20):
+                        print("Should log out now")
+                        self.handle_inactivity(msg.split()[1], conn)
                     elif msg.startswith("SEARCH"):
                         msg_split = msg.split()
                         item_category = msg_split[1]
