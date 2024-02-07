@@ -1,5 +1,6 @@
 import socket
 import threading
+import time
 from products_db_model import ProductsDatabase
 from customers_db_model import CustomersDatabase
 
@@ -182,11 +183,17 @@ class BuyerServer:
         except Exception as e:
             print(f"Error during logout: {e}")
             conn.send("Logout failed.".encode(self.FORMAT))
+    
+    def handle_inactivity(self, buyer_id, conn):
+        print("Handling inactivity...")
+        self.handle_logout(buyer_id, conn)
 
 
     def handle_client(self, conn, addr):
         print(f"[NEW CONNECTION] {addr} connected.")
         connected = True
+
+        inactivityTimer = time.time()
 
         while connected:
             try:
@@ -195,7 +202,13 @@ class BuyerServer:
                     msg_length = int(msg_length)
                     msg = conn.recv(msg_length).decode(self.FORMAT)
                     print(f"Message in [Server]: {msg}")
-                    if msg.startswith("CREATE_ACCOUNT"):
+                    # inactivity check
+                    previoustime = inactivityTimer
+                    inactivityTimer = time.time()
+                    if(inactivityTimer - previoustime > 20):
+                        print("Should log out now")
+                        self.handle_inactivity(msg.split()[1], conn)
+                    elif msg.startswith("CREATE_ACCOUNT"):
                         _, username, password, name = msg.split()
                         self.handle_create_account(username, password, name, conn)
                     elif msg.startswith("LOGIN"):
