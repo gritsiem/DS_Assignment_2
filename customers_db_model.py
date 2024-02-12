@@ -46,6 +46,7 @@ class CustomersDatabase:
         try:
             self.cursor.execute("UPDATE buyer SET is_logged_in = %s WHERE buyer_id = %s", (state, buyer_id))
             self.connection.commit()
+            return "Update successful"
         except Exception as e:
             self.connection.rollback()
             print(f"Error updating login state: {e}")
@@ -71,6 +72,7 @@ class CustomersDatabase:
         else:
             self.cursor.execute("INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (%s, %s, %s)", (cart_id, product_id, quantity))
         self.connection.commit()
+        return "Item is added to the cart successfully"
     
     def remove_item_from_cart(self, buyer_id, product_id, quantity):
         try:
@@ -109,13 +111,14 @@ class CustomersDatabase:
 
             if cart is None:
                 print(f"No active cart found for buyer_id: {buyer_id}")
-                return
+                return f"No active cart found for buyer_id: {buyer_id}"
 
             cart_id = cart[0]
             # print(f"Cart Id: {cart_id}")
             self.cursor.execute("DELETE FROM cart_items WHERE cart_id = %s", (cart_id,))
             self.cursor.execute("DELETE FROM cart WHERE cart_id = %s", (cart_id,))
             self.connection.commit()
+            return "Cart cleared."
         except Exception as e:
             print(f"Error clearing the cart: {e}")
             self.connection.rollback()

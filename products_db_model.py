@@ -22,9 +22,13 @@ class ProductsDatabase:
     
     def search_products(self, item_category, keywords):
         try:
+            print("In search fn in db...")
+            print(f"Keywords in db: {keywords}")
             sql_query = "SELECT * FROM product WHERE item_category = %s AND (" + " OR ".join(["keywords @> %s" for _ in keywords]) + ");"
             self.cursor.execute(sql_query, (item_category, *keywords))
-            return self.cursor.fetchall()
+            results = self.cursor.fetchall()
+            print(f"Result in search: {results}")
+            return results
         except OperationalError as e:
             print(f"An error occurred while executing the query: {e}")
         except Exception as e:
@@ -64,8 +68,15 @@ class ProductsDatabase:
 
     def update_feedback(self, product_id, feedback_type):
         try:
-            column_to_increment = 'thumbs_up_count' if feedback_type == '1' else '2'
-            self.cursor.execute(f"UPDATE product SET {column_to_increment} = (SELECT {column_to_increment} FROM product WHERE id = %s) +1 WHERE id = %s", (product_id,product_id))
+            # column_to_increment = 'thumbs_up_count' if feedback_type == '1' else 'thumbs_down_count'
+            # print(f"Column: {column_to_increment}")
+            # query = f"UPDATE product SET {column_to_increment} = (SELECT {column_to_increment} FROM product WHERE id = %s) +1 WHERE id = %s"
+            if feedback_type == '1':
+                query = "UPDATE product SET thumbs_up_count = (SELECT thumbs_up_count FROM product WHERE id = %s) +1 WHERE id = %s"
+            else:
+                query = "UPDATE product SET thumbs_down_count = (SELECT thumbs_down_count FROM product WHERE id = %s) +1 WHERE id = %s"
+            print(f"Query: {query}")
+            self.cursor.execute(query, (product_id,product_id))
             self.connection.commit()
             return "Feedback updated successfully."
         except Exception as e:
