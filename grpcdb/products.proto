@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package products;
+
+service Products{
+
+rpc GetRowsByColumn(SelectOneMessage) returns (generalResponse){}
+rpc GetRowByMultiColumns(SelectManyMessage) returns (generalResponse){}
+rpc InsertProduct(InsertMessage) returns (generalResponse){}
+rpc UpdateRowByColumn(UpdateMessage) returns (generalResponse){}
+rpc UpdateRowByMulti(UpdateManyMessage) returns (generalResponse){}
+rpc DeleteRow(DeleteMessage) returns (generalResponse){}
+
+}
+
+
+message SelectOneMessage{
+    string table_name = 1;
+    string column = 2;
+    string search_value = 3;
+    string selected_columns = 4;
+}
+
+message SelectManyMessage{
+    string table_name = 1;
+    string columns = 2;
+    string search_values = 3;
+    int32 return_index = 4;
+}
+
+message InsertMessage{
+    string table_name = 1;
+    string columns = 2;
+    string values = 3;
+}
+message UpdateMessage{
+    string table_name = 1;
+    string columns = 2;
+    string values = 3;
+    string condition_col = 4;
+    int32 condition_val = 5;
+}
+
+message UpdateManyMessage{
+    string table_name = 1;
+    string columns = 2;
+    string values = 3;
+    string condition_cols = 4;
+    string condition_vals = 5;
+}
+message DeleteMessage{
+    string table_name = 1;
+    string condition_cols = 4;
+    string condition_vals = 5;
+}
+
+message generalResponse{
+    string msg=1;
+}

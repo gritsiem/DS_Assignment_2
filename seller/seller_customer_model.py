@@ -53,9 +53,8 @@ class CustomerInterface:
                 self.cursor.execute("SELECT id, username, password FROM seller WHERE username = %s AND password = %s",(un, pw))
                 user = self.cursor.fetchone()
             else:
-                self.cursor.execute("SELECT id, username, password FROM seller WHERE username = %s",(un))
+                self.cursor.execute("SELECT id, username, password FROM seller WHERE username = %s",(un,))
                 user = self.cursor.fetchone()
-                
         except Exception as e:
             print(e)
             return -1
