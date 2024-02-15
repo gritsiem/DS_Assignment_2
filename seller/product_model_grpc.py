@@ -64,7 +64,7 @@ class ProductInterfaceGRPC:
         selectRequest = pb2.SelectOneMessage(table_name="product",  column ="seller_id", search_value=f"{sellerid}", selected_columns = "id,item_name,item_category,condition,sale_price,quantity")
         products = self.__stub.GetRowsByColumn(selectRequest)     
         # Fetch all
-        print("whoop ",products.msg)
+        # print("whoop ",products.msg)
         products = literal_eval(products.msg)
         return products 
     
