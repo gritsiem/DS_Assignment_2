@@ -347,11 +347,12 @@ class SellerPortal:
 
     def handleLogout(self, inactivity = False):
         self.LOGIN_STATUS = False
-        if inactivity:
-            self.currentPage=0
-            return {"msg": "You were logged out because of inactivity. Please login again.\n\n" + self.getMenuMessage("home"), "invokeTime":None}
+        # if inactivity:
+        #     self.currentPage=0
+        #     return {"msg": "You were logged out because of inactivity. Please login again.\n\n" + self.getMenuMessage("home"), "invokeTime":None}
         self.globalResponse["msg"] = "Logging out...\n\n" + self.getMenuMessage("home")
         self.globalResponse["invokeTime"] = None
+        self.products.cleandb()
 
         
     def handleExit(self):

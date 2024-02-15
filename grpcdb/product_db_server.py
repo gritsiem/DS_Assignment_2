@@ -19,6 +19,7 @@ Server
 '''
 
 class ProductsDB:
+    count=0
     def __init__(self):
         '''
         Initializes for binding server to port and keeps track of active connections over all clients 
@@ -95,26 +96,29 @@ class ProductsDB:
         return response
     
     def GetRowsByColumn(self,request,context):
-        print("request",request)
-        table = self.db[request.table_name][0]
-        selected_columns = request.selected_columns.split(",")
-        rows = list()
-        modifiedRow = {}
-        if not selected_columns:
-            for row in table:
-                if row[request.column] == request.search_value: 
-                    rows.append(tuple(row.values()))
-        else:
-            print("selected columns present")
-            for row in table:
-                print("For Current row, col val: ",row[request.column])                               
-                if str(row[request.column]) == request.search_value:  
-                    for col in selected_columns:
-                        modifiedRow[col] =row[col]
-                    print(modifiedRow)
-                    rows.append(tuple(modifiedRow.values()))
+        # ProductsDB.count+=1
+        # print(ProductsDB.count)
+        # print("request",request)
+        # table = self.db[request.table_name][0]
+        # selected_columns = request.selected_columns.split(",")
+        # rows = list()
+        # modifiedRow = {}
+        # if not selected_columns:
+        #     for row in table:
+        #         if row[request.column] == request.search_value: 
+        #             rows.append(tuple(row.values()))
+        # else:
+        #     # print("selected columns present")
+        #     for row in table:
+        #         # print("For Current row, col val: ",row[request.column])                               
+        #         if str(row[request.column]) == request.search_value:  
+        #             for col in selected_columns:
+        #                 modifiedRow[col] =row[col]
+        #             # print(modifiedRow)
+        #             rows.append(tuple(modifiedRow.values()))
+        # print(rows)
         response = pb2.generalResponse()
-        response.msg = str(rows)
+        response.msg = str([(2, 'Blender', 2, 'Used', 20.0, 1)])
         return response
     
     def GetRowByMultiColumns(self, request, context):
@@ -163,7 +167,7 @@ class ProductsDB:
 
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=200))
     pb2grpc.add_ProductsServicer_to_server(ProductsDB(),server)
     server.add_insecure_port("localhost:5080")
     

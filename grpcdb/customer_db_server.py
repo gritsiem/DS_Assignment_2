@@ -115,7 +115,7 @@ class CustomerDB(pb2grpc.CustomersServicer):
 
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=200))
     pb2grpc.add_CustomersServicer_to_server(CustomerDB(),server)
     server.add_insecure_port("localhost:6080")
     

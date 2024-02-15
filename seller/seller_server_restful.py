@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 from seller import SellerPortal
 app = Flask(__name__)
 
@@ -57,7 +57,14 @@ def ratings():
     if request.method == 'GET':
         token = request.form['token']
         return jsonify(portal.handleGetRatings(token))
+    
+@app.route('/logout', methods = ["GET"])
+def logout():
+    if request.method == 'GET':
+        # token = request.form['token']
+        jsonify(portal.handleLogout())
+        return redirect("/")
 
 
 if __name__ == '__main__':
-    app.run(threaded = True)
+    app.run(debug=True)

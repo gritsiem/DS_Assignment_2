@@ -8,6 +8,7 @@ from ast import literal_eval
 
 
 class ProductInterfaceGRPC:
+    counter = 0
     def __init__(self):
         '''
         Initializes required parameters for socket connection and also begins communication. 
@@ -21,6 +22,8 @@ class ProductInterfaceGRPC:
     def inititate_connection(self):
         self.channel = grpc.insecure_channel(self._ADDRESS,options=(('grpc.enable_http_proxy',0),))
         self.__stub = pb2grpc.ProductsStub(self.channel)
+        ProductInterfaceGRPC.counter+=1
+        print(ProductInterfaceGRPC.counter)
 
     def addProduct(self, sellerid, name, category, condition, price, quantity, keywords):
 
@@ -58,6 +61,7 @@ class ProductInterfaceGRPC:
 
         
     def getProducts(self, sellerid):
+        # print(ProductInterfaceGRPC.counter)
         products = []
         #try:
         msg = f""
@@ -85,7 +89,9 @@ class ProductInterfaceGRPC:
             thumbsups+=feedback[0]
             thumbsdowns += feedback[1]
         return thumbsups, thumbsdowns
-    
+    def close_conn(self):
+        # self.channel.close()
+        pass
 
 if __name__ == "__main__":
     client = ProductInterfaceGRPC()

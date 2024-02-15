@@ -37,7 +37,7 @@ def startClient():
 
             # end of run calculation for both stats
             # reset counters for the next run
-            if tpcounter == 999:
+            if tpcounter == 99:
                 stats["atp"].append((tpcounter-1)/optimes)
                 tpcounter=0
                 optimes = 0
@@ -47,11 +47,13 @@ def startClient():
                 stats["art"].append(sum(responseTimes)/10)
                 responseTimes = []
                 responseCounter=0
+    client.logout()
     with open("log.txt", "a") as f:
         f.write(f"Average Response times for client :  {stats['art']} \n")
         f.write(f"Average throughput for client :  {stats['atp']} \n========\n")
 
-for i in range(10):
+for i in range(100):
+    # time.sleep(0.5)
     print(i)
     thread = threading.Thread(target = startClient)
     thread.start()

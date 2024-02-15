@@ -13,7 +13,7 @@ import threading
 
 
 class Client():
-    __URLS = {'home':'http://127.0.0.1:5000'}
+    __URLS = {'home':'http://127.0.0.1:8080'}
         
     def __init__(self):
         Client.__URLS.update({
@@ -21,6 +21,7 @@ class Client():
             'register': Client.__URLS["home"]+'/register',
             'products': Client.__URLS["home"]+'/products',   
             'ratings': Client.__URLS["home"]+'/ratings',         
+            'logout': Client.__URLS["home"]+'/logout',         
         })
         self.__current_function = None
         self.__ERRORS={
@@ -29,9 +30,12 @@ class Client():
         self.currentError = None
         self.__token=None
         self.active = True
-        self.inactivityThread = threading.Thread(target = self.sessionTimer)
+        s = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(max_retries = 5)
+        s.mount("http://",adapter)
+        # self.inactivityThread = threading.Thread(target = self.sessionTimer)
         self.handleSession()
-        self.inactivityThread.start()
+        # self.inactivityThread.start()
         
     def sessionTimer(self):
         time.sleep(300)
@@ -68,8 +72,10 @@ class Client():
         return resp["msg"]
 
     def getProducts(self):
+        resp = None
         resp = requests.get(self.__URLS["products"], data={"token" : self.__token})
-        return resp.json()["msg"]
+        # print("Error is here")
+        return resp.json()["msg"] if resp else " "
 
     def addProduct(self):
         isValid = False
@@ -195,7 +201,7 @@ class Client():
         self.__token = None
         self.__current_function=None
         print("User logged out")
-        return requests.get(self.__URLS["home"])
+        return requests.get(self.__URLS["logout"])
     
     def home(self):
         return requests.get(self.__URLS["home"])
@@ -246,8 +252,8 @@ class Client():
     def handleSession(self):
         while self.active:
             
-            self.inactivityThread.
-            thread.start()
+            # self.inactivityThread.
+            # thread.start()
             response = self.sendRequest()
             if type(response) is str:
                 print(response)
