@@ -9,6 +9,7 @@ Client can
 
 import requests
 import time
+import threading
 
 
 class Client():
@@ -28,11 +29,21 @@ class Client():
         self.currentError = None
         self.__token=None
         self.active = True
+        self.inactivityThread = threading.Thread(target = self.sessionTimer)
         self.handleSession()
-
+        self.inactivityThread.start()
+        
+    def sessionTimer(self):
+        time.sleep(300)
+        print("Loggin out due to inactivity...")
+        self.__token = None
+        self.__current_function==None
+        pass
     def login(self):
-        un = input("Please enter username: ")
-        pw = input("Please enter password: ")
+        # un = input("Please enter username: ")
+        # pw = input("Please enter password: ")
+        un = "user1"
+        pw = "userone"
         resp = requests.post(self.__URLS["login"], data={"username":un, "password":pw})
         resp = resp.json()
         self.loggedIn = True
@@ -234,6 +245,9 @@ class Client():
 
     def handleSession(self):
         while self.active:
+            
+            self.inactivityThread.
+            thread.start()
             response = self.sendRequest()
             if type(response) is str:
                 print(response)

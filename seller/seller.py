@@ -127,7 +127,7 @@ class Products:
         Get all products of a particular seller 
         '''
         decoded_token = jwt.decode(token, options={"verify_signature":False})
-        print("Decoded token: ",decoded_token)
+        # print("Decoded token: ",decoded_token)
         id = decoded_token["id"]
         products = [] 
         try:
