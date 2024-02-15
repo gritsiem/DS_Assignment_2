@@ -207,6 +207,27 @@ class BuyerClient:
         else:
             print(f"response code is {response.status_code}, raw response is {response.text}")
             return response.text
+    
+    def make_purchase(name, credit_card_number, expiration_date):
+        url = "http://soap-service/MakePurchase"
+        headers = {
+            "Content-Type": "text/xml; charset=utf-8",
+            "SOAPAction": "http://soap-service-action/MakePurchase"
+        }
+        body = f"""<?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Body>
+                <VerifyTransaction xmlns="http://your-namespace/">
+                    <userName>{user_name}</userName>
+                    <creditCardNumber>{credit_card_number}</creditCardNumber>
+                </VerifyTransaction>
+            </soap:Body>
+        </soap:Envelope>"""
+        response = requests.post(url, data=body, headers=headers)
+        if response.status_code == 200:
+            print(f"Purchase response: {response}")
+        else:
+            print(f"Request failed with status code: {response.status_code}")
 
     def logout(self, reqmethod, endpoint, data):
         # Logs out the current user and resets the session
@@ -240,7 +261,8 @@ class BuyerClient:
         print("9. Purchase History")
         print("10. Provide Feedback")
         print("11. Get Seller Rating")
-        print("12. Logout")
+        print("12. Make Purchase")
+        print("13. Logout")
     
     def show_options(self):   
         while True:
@@ -332,6 +354,11 @@ class BuyerClient:
             data = {'seller_id': seller_id}
             self.get_seller_rating(requests.get, 'sellerrating', data)
         elif option == '12':
+            name = input("Enter name: ")
+            credit_card_number = input("Enter credit card number: ")
+            expiration_date = input("Enter expiration date in MM/DD/YYYY: ")
+            self.make_purchase(name, credit_card_number, expiration_date)
+        elif option == '13':
             data = {'buyer_id': self.buyer_id}
             self.logout(requests.post, 'logout', data)
         else:
