@@ -208,26 +208,34 @@ class BuyerClient:
             print(f"response code is {response.status_code}, raw response is {response.text}")
             return response.text
     
-    def make_purchase(name, credit_card_number, expiration_date):
-        url = "http://soap-service/MakePurchase"
-        headers = {
-            "Content-Type": "text/xml; charset=utf-8",
-            "SOAPAction": "http://soap-service-action/MakePurchase"
-        }
-        body = f"""<?xml version="1.0" encoding="utf-8"?>
-        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-            <soap:Body>
-                <VerifyTransaction xmlns="http://your-namespace/">
-                    <userName>{user_name}</userName>
-                    <creditCardNumber>{credit_card_number}</creditCardNumber>
-                </VerifyTransaction>
-            </soap:Body>
-        </soap:Envelope>"""
-        response = requests.post(url, data=body, headers=headers)
+    def make_purchase(self, reqmethod, endpoint, data):
+        # url = "http://soap-service/MakePurchase"
+        # headers = {
+        #     "Content-Type": "text/xml; charset=utf-8",
+        #     "SOAPAction": "http://soap-service-action/MakePurchase"
+        # }
+        # body = f"""<?xml version="1.0" encoding="utf-8"?>
+        # <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        #     <soap:Body>
+        #         <VerifyTransaction xmlns="http://your-namespace/">
+        #             <userName>{user_name}</userName>
+        #             <creditCardNumber>{credit_card_number}</creditCardNumber>
+        #         </VerifyTransaction>
+        #     </soap:Body>
+        # </soap:Envelope>"""
+        print(data)
+        jsonData = jsonpickle.encode(data)
+        url = "http://" + self.REST + ":" + self.PORT + "/" + endpoint
+        print(f"URL: {url}")
+        response = reqmethod(url, data = jsonData, headers={'Content-type': 'application/json'})
         if response.status_code == 200:
-            print(f"Purchase response: {response}")
+            responseData = response.json()
+            jsonResponse = json.dumps(responseData, indent=4, sort_keys=True)
+            print(f"Make Purchase response:\n{responseData}")
+            return
         else:
-            print(f"Request failed with status code: {response.status_code}")
+            print(f"response code is {response.status_code}, raw response is {response.text}")
+            return response.text
 
     def logout(self, reqmethod, endpoint, data):
         # Logs out the current user and resets the session
@@ -357,7 +365,8 @@ class BuyerClient:
             name = input("Enter name: ")
             credit_card_number = input("Enter credit card number: ")
             expiration_date = input("Enter expiration date in MM/DD/YYYY: ")
-            self.make_purchase(name, credit_card_number, expiration_date)
+            data = {'buyer_id': self.buyer_id, 'name': name, 'credit_card_number': credit_card_number, 'expiration_date': expiration_date}
+            self.make_purchase(requests.post, 'makepurchase', data)
         elif option == '13':
             data = {'buyer_id': self.buyer_id}
             self.logout(requests.post, 'logout', data)

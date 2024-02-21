@@ -6,6 +6,8 @@ import os
 from products_db_model import ProductsDatabase
 from customers_db_model import CustomersDatabase
 from dotenv import load_dotenv
+# import spyne_application
+from zeep import Client
 
 load_dotenv()
 
@@ -167,6 +169,24 @@ def handle_provide_feedback():
         return jsonify({"message": "Feedback updated successfully."}), 200
     else:
         return jsonify({"error": "Failed to update feedback."}), 500
+
+@app.route('/makepurchase', methods = ['POST'])
+def handle_make_purchase():
+    data = request.json
+    print(f"Data in server..: {data}")
+    buyer_id = data['buyer_id']
+    name = data['name']
+    credit_card_number = data['credit_card_number']
+    expiration_date = data['expiration_date']
+    soap_client = Client('http://localhost:8000/?wsdl')
+    response = soap_client.service.make_purchase(id=buyer_id, name = name, credit_card_number=credit_card_number, expiration_date=expiration_date)
+
+    # response = spyne_application.make_purchase(buyer_id, credit_card_number, expiration_date)
+    print(f"Make Purchase Response: {response}")
+    if response:
+        return jsonify({"message": response}), 200
+    else:
+        return jsonify({"message": "Error making the payment"}), 401  
 
 @app.route('/logout', methods = ['POST'])
 def handle_logout():
